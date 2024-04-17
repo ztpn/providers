@@ -21,7 +21,7 @@ export const jettScraper = makeEmbed({
   name: 'Jett',
   rank: 300,
   scrape: async (ctx) => {
-    const embedRes = await ctx.fetcher<embedRes>(ctx.url, {
+    const embedRes = await ctx.proxiedFetcher<embedRes>(ctx.url, {
       headers: {
         referer: ctx.url,
       },
