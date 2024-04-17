@@ -1,7 +1,7 @@
 import { flags } from '@/entrypoint/utils/targets';
-
-import { makeEmbed } from '../base';
-import { Caption, getCaptionTypeFromUrl, labelToLanguageCode } from '../captions';
+import { makeEmbed } from '@/providers/base';
+import { Caption, getCaptionTypeFromUrl, labelToLanguageCode } from '@/providers/captions';
+import { NotFoundError } from '@/utils/errors';
 
 type embedRes = {
   source: string;
@@ -16,16 +16,17 @@ type ThumbnailTrack = {
   url: string;
 };
 
-export const viperScraper = makeEmbed({
-  id: 'viper',
-  name: 'VidSrcPro-viper',
-  rank: 250,
+export const jettScraper = makeEmbed({
+  id: 'jett',
+  name: 'Jett',
+  rank: 300,
   scrape: async (ctx) => {
     const embedRes = await ctx.fetcher<embedRes>(ctx.url, {
       headers: {
         referer: ctx.url,
       },
     });
+    if (!embedRes.source) throw new NotFoundError('No watchable item found');
 
     const captions: Caption[] = [];
     if (embedRes.subtitles) {

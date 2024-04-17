@@ -1,6 +1,5 @@
 import { load } from 'cheerio';
 
-import { flags } from '@/entrypoint/utils/targets';
 import { SourcererEmbed, SourcererOutput, makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext, ShowScrapeContext } from '@/utils/context';
 
@@ -10,7 +9,7 @@ type hashResult = {
 };
 
 const vidSrcProBase = 'https://vidsrc.pro';
-const referer = `${vidSrcProBase}/`;
+const referer = vidSrcProBase;
 
 const universalScraper = async (ctx: ShowScrapeContext | MovieScrapeContext): Promise<SourcererOutput> => {
   const hashRegex = /"hash":\s*"([^"]+)"/;
@@ -21,7 +20,7 @@ const universalScraper = async (ctx: ShowScrapeContext | MovieScrapeContext): Pr
       ? `/embed/movie/${tmdbId}`
       : `/embed/tv/${tmdbId}/${ctx.media.season.number}/${ctx.media.episode.number}`;
 
-  const mainPage = await ctx.fetcher<string>(url, {
+  const mainPage = await ctx.proxiedFetcher<string>(url, {
     baseUrl: vidSrcProBase,
     headers: {
       referer,
@@ -30,6 +29,7 @@ const universalScraper = async (ctx: ShowScrapeContext | MovieScrapeContext): Pr
   const mainPage$ = load(mainPage);
   const hash = mainPage$('script').text().match(hashRegex);
   if (!hash) throw new Error('No hash found');
+
   const decodedHash: hashResult[] = JSON.parse(atob(hash[1].split('').reverse().join('')));
 
   const embeds: SourcererEmbed[] = [];
@@ -50,6 +50,6 @@ export const vidSrcProScraper = makeSourcerer({
   name: 'VidSrcPro',
   scrapeMovie: universalScraper,
   scrapeShow: universalScraper,
-  flags: [flags.CORS_ALLOWED, flags.IP_LOCKED],
-  rank: 115,
+  flags: [],
+  rank: 125,
 });
