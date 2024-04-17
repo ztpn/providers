@@ -1,6 +1,5 @@
+import { load } from 'cheerio';
 import { unpack } from 'unpacker';
-
-import { flags } from '@/entrypoint/utils/targets';
 
 import { SubtitleResult } from './types';
 import { makeEmbed } from '../../base';
@@ -19,9 +18,10 @@ export const fileMoonScraper = makeEmbed({
         referer: ctx.url,
       },
     });
-    const evalCode = embedRes.match(evalCodeRegex);
+    const embedHtml = load(embedRes);
+    const evalCode = embedHtml('script').text().match(evalCodeRegex);
     if (!evalCode) throw new Error('Failed to find eval code');
-    const unpacked = unpack(evalCode[1]);
+    const unpacked = unpack(evalCode[0]);
     const file = fileRegex.exec(unpacked);
     if (!file?.[1]) throw new Error('Failed to find file');
 
@@ -51,7 +51,7 @@ export const fileMoonScraper = makeEmbed({
           id: 'primary',
           type: 'hls',
           playlist: file[1],
-          flags: [flags.CORS_ALLOWED],
+          flags: [],
           captions,
         },
       ],
