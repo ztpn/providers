@@ -13,11 +13,20 @@ async function fetchCaptchaToken(ctx: MovieScrapeContext | ShowScrapeContext, do
   // by mrjvs
   const domainHash = Base64.stringify(Utf8.parse(domain)).replace(/=/g, '.');
 
-  const recaptchaRender = await ctx.proxiedFetcher<string>(`https://www.google.com/recaptcha/api.js`, {
+  let recaptchaRender;
+
+  const recaptchaRenderRes = await ctx.proxiedFetcher.full<string>(`https://www.google.com/recaptcha/api.js`, {
     query: {
       render: recaptchaKey,
     },
   });
+
+  // this js file should be called with the siteKey in the query
+  // but it smashystream is calling it without it
+  // and when the siteKey is provided in the query, it returns 400
+  // but, here I'm attempting to use the siteKey anyway. maybe they'll change it in the future?
+  if (recaptchaRenderRes.statusCode === 200) recaptchaRender = recaptchaRenderRes.body;
+  else recaptchaRender = await ctx.proxiedFetcher<string>(`https://www.google.com/recaptcha/api.js`);
 
   const vToken = recaptchaRender.substring(
     recaptchaRender.indexOf('/releases/') + 10,
