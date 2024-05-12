@@ -67,7 +67,7 @@ export async function scrapeInvidualSource(
     return true;
   });
 
-  // opensubtitles
+  // for opensubtitles to work with embed scrapers
   for (const embed of output.embeds)
     embed.url = `${embed.url}${btoa('MEDIA=')}${btoa(`${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`)}`;
 
@@ -80,14 +80,18 @@ export async function scrapeInvidualSource(
     if (playableStreams.length === 0) throw new NotFoundError('No playable streams found');
 
     // opensubtitles
-    for (const playableStream of playableStreams) {
-      playableStream.captions = await addMissingCaptions(
-        playableStream.captions,
-        ops,
-        btoa(
-          `${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`,
-        ),
-      );
+    try {
+      for (const playableStream of playableStreams) {
+        playableStream.captions = await addMissingCaptions(
+          playableStream.captions,
+          ops,
+          btoa(
+            `${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`,
+          ),
+        );
+      }
+    } catch {
+      //
     }
     output.stream = playableStreams;
   }
@@ -112,6 +116,7 @@ export async function scrapeIndividualEmbed(
 
   let url = ops.url;
   let media;
+  // parse the embed url if it includes the data for openubtitles
   if (ops.url.includes(btoa('MEDIA='))) [url, media] = url.split(btoa('MEDIA='));
 
   const output = await embedScraper.scrape({
@@ -135,9 +140,14 @@ export async function scrapeIndividualEmbed(
   const playableStreams = await validatePlayableStreams(output.stream, ops, embedScraper.id);
   if (playableStreams.length === 0) throw new NotFoundError('No playable streams found');
 
+  // opensubtiles
   if (media)
-    for (const playableStream of playableStreams)
-      playableStream.captions = await addMissingCaptions(playableStream.captions, ops, media);
+    try {
+      for (const playableStream of playableStreams)
+        playableStream.captions = await addMissingCaptions(playableStream.captions, ops, media);
+    } catch {
+      //
+    }
   output.stream = playableStreams;
 
   return output;

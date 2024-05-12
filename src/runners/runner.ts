@@ -109,13 +109,17 @@ export async function runAllProviders(list: ProviderList, ops: ProviderRunnerOpt
       if (!playableStream) throw new NotFoundError('No streams found');
 
       // opensubtitles
-      playableStream.captions = await addMissingCaptions(
-        playableStream.captions,
-        ops,
-        btoa(
-          `${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`,
-        ),
-      );
+      try {
+        playableStream.captions = await addMissingCaptions(
+          playableStream.captions,
+          ops,
+          btoa(
+            `${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`,
+          ),
+        );
+      } catch {
+        //
+      }
 
       return {
         sourceId: source.id,
@@ -166,13 +170,17 @@ export async function runAllProviders(list: ProviderList, ops: ProviderRunnerOpt
         if (!playableStream) throw new NotFoundError('No streams found');
 
         // opensubtitles
-        playableStream.captions = await addMissingCaptions(
-          playableStream.captions,
-          ops,
-          btoa(
-            `${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`,
-          ),
-        );
+        try {
+          playableStream.captions = await addMissingCaptions(
+            playableStream.captions,
+            ops,
+            btoa(
+              `${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`,
+            ),
+          );
+        } catch {
+          //
+        }
         embedOutput.stream = [playableStream];
       } catch (error) {
         const updateParams: UpdateEvent = {
