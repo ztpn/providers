@@ -4,6 +4,8 @@ import { droploadScraper } from '@/providers/embeds/dropload';
 import { febboxHlsScraper } from '@/providers/embeds/febbox/hls';
 import { febboxMp4Scraper } from '@/providers/embeds/febbox/mp4';
 import { filelionsScraper } from '@/providers/embeds/filelions';
+import { megaCdnScraper } from '@/providers/embeds/megacloud/megacloud';
+import { megaCloudScraper } from '@/providers/embeds/megacloud/upcloud';
 import { mixdropScraper } from '@/providers/embeds/mixdrop';
 import { mp4uploadScraper } from '@/providers/embeds/mp4upload';
 import { streambucketScraper } from '@/providers/embeds/streambucket';
@@ -108,5 +110,7 @@ export function gatherAllEmbeds(): Array<Embed> {
     warezcdnembedHlsScraper,
     warezcdnembedMp4Scraper,
     bflixScraper,
+    megaCloudScraper,
+    megaCdnScraper,
   ];
 }
