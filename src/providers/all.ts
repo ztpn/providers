@@ -40,6 +40,7 @@ import { warezcdnembedMp4Scraper } from './embeds/warezcdn/mp4';
 import { wootlyScraper } from './embeds/wootly';
 import { goojaraScraper } from './sources/goojara';
 import { hdRezkaScraper } from './sources/hdrezka';
+import { hurawatchScraper } from './sources/hurawatch';
 import { nepuScraper } from './sources/nepu';
 import { nitesScraper } from './sources/nites';
 import { primewireScraper } from './sources/primewire';
@@ -72,6 +73,7 @@ export function gatherAllSources(): Array<Sourcerer> {
     nitesScraper,
     soaperTvScraper,
     tugaflixScraper,
+    hurawatchScraper,
   ];
 }
 
