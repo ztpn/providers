@@ -27,6 +27,8 @@ import { bflixScraper } from './embeds/bflix';
 import { closeLoadScraper } from './embeds/closeload';
 import { fileMoonScraper } from './embeds/filemoon';
 import { fileMoonMp4Scraper } from './embeds/filemoon/mp4';
+import { hydraxScraper } from './embeds/hydrax';
+import { playm4uNMScraper } from './embeds/playm4u/nm';
 import { ridooScraper } from './embeds/ridoo';
 import { smashyStreamOScraper } from './embeds/smashystream/opstream';
 import { smashyStreamFScraper } from './embeds/smashystream/video1';
@@ -108,5 +110,7 @@ export function gatherAllEmbeds(): Array<Embed> {
     warezcdnembedHlsScraper,
     warezcdnembedMp4Scraper,
     bflixScraper,
+    playm4uNMScraper,
+    hydraxScraper,
   ];
 }
