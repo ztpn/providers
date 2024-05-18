@@ -5,6 +5,7 @@ import { load } from 'cheerio';
 import { SourcererEmbed, makeSourcerer } from '@/providers/base';
 import { compareMedia } from '@/utils/compare';
 import { MovieScrapeContext, ShowScrapeContext } from '@/utils/context';
+import { makeCookieHeader, parseSetCookie } from '@/utils/cookie';
 import { NotFoundError } from '@/utils/errors';
 
 let baseUrl = 'https://m4ufree.tv';
@@ -58,12 +59,10 @@ const universalScraper = async (ctx: MovieScrapeContext | ShowScrapeContext) => 
     ?.match(/_token:\s?'(.*)'/m)?.[1];
   if (!csrfToken) throw new Error('Failed to find csrfToken');
 
-  // I tried using parseSetCookie from utils/cookie
-  // But it just parses the first cookie for some reason
-  // even makeCookieHeader was messging up smth
-  // plus doesn't really matter
-  const cookie = watchPage.headers.get('Set-Cookie')?.match(/(laravel_session=.*?);/m)?.[1];
-  if (!cookie) throw new Error('Failed to find cookie');
+  const laravelSession = parseSetCookie(watchPage.headers.get('Set-Cookie') ?? '').laravel_session;
+  if (!laravelSession?.value) throw new Error('Failed to find cookie');
+
+  const cookie = makeCookieHeader({ [laravelSession.name]: laravelSession.value });
 
   if (ctx.media.type === 'show') {
     const s = ctx.media.season.number < 10 ? `0${ctx.media.season.number}` : ctx.media.season.number.toString();
