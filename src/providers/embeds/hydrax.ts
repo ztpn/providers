@@ -18,6 +18,8 @@ export const hydraxScraper = makeEmbed({
     const data: { id: string; domain: string } = JSON.parse(atob(match[1]));
     if (!data.id || !data.domain) throw new Error('Required values missing');
 
+    const domain = new URL((await ctx.proxiedFetcher.full(`https://${data.domain}`)).finalUrl).hostname;
+
     return {
       stream: [
         {
@@ -27,24 +29,24 @@ export const hydraxScraper = makeEmbed({
             ...(qualityData?.fullHd && {
               1080: {
                 type: 'mp4',
-                url: `https://${data.domain}/whw${data.id}`,
+                url: `https://${domain}/whw${data.id}`,
               },
             }),
             ...(qualityData?.hd && {
               720: {
                 type: 'mp4',
-                url: `https://${data.domain}/www${data.id}`,
+                url: `https://${domain}/www${data.id}`,
               },
             }),
             ...(qualityData?.mHd && {
               480: {
                 type: 'mp4',
-                url: `https://${data.domain}/${data.id}`,
+                url: `https://${domain}/${data.id}`,
               },
             }),
             360: {
               type: 'mp4',
-              url: `https://${data.domain}/${data.id}`,
+              url: `https://${domain}/${data.id}`,
             },
           },
           headers: {
