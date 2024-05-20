@@ -35,8 +35,8 @@ const universalScraper = async (ctx: MovieScrapeContext | ShowScrapeContext) => 
         // it just breaks when the titles are too big
         .find('.imagecover a')
         .attr('title')
-        // ex-titles: Home Alone 1990, Avengers Endgame (2019)
-        ?.match(/^(.*?)\s*(?:\(?(\d{4})\)?)?\s*$/) || [];
+        // ex-titles: Home Alone 1990, Avengers Endgame (2019), The Curse (2023-)
+        ?.match(/^(.*?)\s*(?:\(?\s*(\d{4})(?:\s*-\s*\d{0,4})?\s*\)?)?\s*$/) || [];
     const url = searchPage$(element).find('a').attr('href');
 
     if (!title || !url) return;
