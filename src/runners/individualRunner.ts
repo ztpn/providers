@@ -6,7 +6,7 @@ import { EmbedOutput, SourcererOutput } from '@/providers/base';
 import { ProviderList } from '@/providers/get';
 import { ScrapeContext } from '@/utils/context';
 import { NotFoundError } from '@/utils/errors';
-import { addMissingCaptions } from '@/utils/opensubtitles';
+import { addOpenSubtitlesCaptions } from '@/utils/opensubtitles';
 import { isValidStream, validatePlayableStreams } from '@/utils/valid';
 
 export type IndividualSourceRunnerOptions = {
@@ -80,18 +80,14 @@ export async function scrapeInvidualSource(
     if (playableStreams.length === 0) throw new NotFoundError('No playable streams found');
 
     // opensubtitles
-    try {
-      for (const playableStream of playableStreams) {
-        playableStream.captions = await addMissingCaptions(
-          playableStream.captions,
-          ops,
-          btoa(
-            `${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`,
-          ),
-        );
-      }
-    } catch {
-      //
+    for (const playableStream of playableStreams) {
+      playableStream.captions = await addOpenSubtitlesCaptions(
+        playableStream.captions,
+        ops,
+        btoa(
+          `${ops.media.imdbId}${ops.media.type === 'show' ? `.${ops.media.season.number}.${ops.media.episode.number}` : ''}`,
+        ),
+      );
     }
     output.stream = playableStreams;
   }
@@ -142,12 +138,9 @@ export async function scrapeIndividualEmbed(
 
   // opensubtiles
   if (media)
-    try {
-      for (const playableStream of playableStreams)
-        playableStream.captions = await addMissingCaptions(playableStream.captions, ops, media);
-    } catch {
-      //
-    }
+    for (const playableStream of playableStreams)
+      playableStream.captions = await addOpenSubtitlesCaptions(playableStream.captions, ops, media);
+
   output.stream = playableStreams;
 
   return output;
