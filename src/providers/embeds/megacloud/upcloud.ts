@@ -23,7 +23,7 @@ export const megaCloudScraper = makeEmbed({
     const dataId = dataPath[dataPath.length - 1];
 
     const streamRes = await ctx.proxiedFetcher<StreamRes>(
-      `${parsedUrl.origin}/embed-1/ajax/e-1/getSources?id=${dataId}`,
+      `${parsedUrl.origin}/embed-2/ajax/e-1/getSources?id=${dataId}`,
       {
         headers: {
           Referer: parsedUrl.origin,
